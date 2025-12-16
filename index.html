@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -219,64 +220,89 @@ QTY <input type="number" id="qtyF" value="1" min="1" style="width:40px">
 </div>
 
 <script>
-const cart=[];
-let single={};
+const cart = [];
+let single = {};
+const WHATSAPP = '917632896742';
 
-function addToCart(p,pr,q){
-cart.push({p,pr,q});
-render();
+function addToCart(p, pr, q) {
+  q = parseInt(q, 10) || 1;
+  cart.push({ p, pr, q });
+  render();
 }
 
-function render(){
-let t=0;
-cartItems.innerHTML="";
-cart.forEach((i,n)=>{
-t+=i.pr*i.q;
-cartItems.innerHTML+=`<li class="cart-item">${i.p} x${i.q} ₹${i.pr*i.q}
-<button class="remove-btn" onclick="cart.splice(${n},1);render()">×</button></li>`;
-});
-total.textContent=t;
+function render() {
+  let t = 0;
+  cartItems.innerHTML = '';
+  cart.forEach((i, n) => {
+    t += i.pr * i.q;
+    cartItems.innerHTML += `<li class="cart-item">${i.p} x${i.q} ₹${i.pr * i.q}
+      <button class="remove-btn" onclick="cart.splice(${n},1);render()">×</button></li>`;
+  });
+  total.textContent = t;
 }
 
-function toggle(id){document.getElementById(id).classList.toggle("active");}
-
-function openSingle(p,pr,q){single={p,pr,q};toggle('singlePopup');}
-
-function sendCart(){
-let msg=`*A Z Creations*%0A`;
-cart.forEach(i=>msg+=`${i.p} x${i.q} ₹${i.pr*i.q}%0A`);
-window.open(`https://wa.me/917632896742?text=${msg}`);
+function toggle(id) {
+  document.getElementById(id).classList.toggle('active');
 }
 
-function sendSingle(){
-window.open(`https://wa.me/917632896742?text=*${single.p}* x${single.q} ₹${single.pr*single.q}`);
+function openSingle(p, pr, q) {
+  single = { p, pr, q: parseInt(q, 10) || 1 };
+  toggle('singlePopup');
 }
 
-function addLove(){
-let m=loveMsg.value.trim();
-let n=`Love Coaster (${m})`;
-loveName.textContent=n;
-addToCart(n,550,qtyB.value);
+function buildCustomer(prefix) {
+  const name = document.getElementById(prefix + 'Name').value || 'NA';
+  const addr = document.getElementById(prefix + 'Address').value || 'NA';
+  const phone = document.getElementById(prefix + 'Phone').value || 'NA';
+  return `Customer: ${name}\nAddress: ${addr}\nPhone: ${phone}`;
 }
 
-function orderLove(){openSingle(`Love Coaster (${loveMsg.value})`,550,qtyB.value);}
-
-function addBirthday(){
-let n=`Happy Birthday (${bdayMsg.value})`;
-bdayName.textContent=n;
-addToCart(n,550,qtyC.value);
+function sendCart() {
+  if (!cart.length) return alert('Cart is empty');
+  let msg = `A Z Creations\n\n`;
+  cart.forEach(i => msg += `${i.p} x${i.q} = ₹${i.pr * i.q}\n`);
+  msg += `\nTotal: ₹${total.textContent}\n\n` + buildCustomer('c');
+  window.open(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(msg)}`);
 }
 
-function orderBirthday(){openSingle(`Happy Birthday (${bdayMsg.value})`,550,qtyC.value);}
-
-function addHex(){
-let n=`Name Hexagon (${hexMsg.value})`;
-hexName.textContent=n;
-addToCart(n,500,qtyE.value);
+function sendSingle() {
+  let msg = `A Z Creations\n\n${single.p} x${single.q} = ₹${single.pr * single.q}\n\n`;
+  msg += buildCustomer('s');
+  window.open(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(msg)}`);
 }
 
-function orderHex(){openSingle(`Name Hexagon (${hexMsg.value})`,500,qtyE.value);}
+function addLove() {
+  const m = loveMsg.value.trim();
+  const n = `Love Coaster (${m})`;
+  loveName.textContent = n;
+  addToCart(n, 550, qtyB.value);
+}
+
+function orderLove() {
+  openSingle(`Love Coaster (${loveMsg.value})`, 550, qtyB.value);
+}
+
+function addBirthday() {
+  const n = `Happy Birthday (${bdayMsg.value})`;
+  bdayName.textContent = n;
+  addToCart(n, 550, qtyC.value);
+}
+
+function orderBirthday() {
+  openSingle(`Happy Birthday (${bdayMsg.value})`, 550, qtyC.value);
+}
+
+function addHex() {
+  const n = `Name Hexagon (${hexMsg.value})`;
+  hexName.textContent = n;
+  addToCart(n, 500, qtyE.value);
+}
+
+function orderHex() {
+  openSingle(`Name Hexagon (${hexMsg.value})`, 500, qtyE.value);
+}
 </script>
 
 </body>
 </html>
+```
