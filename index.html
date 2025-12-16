@@ -1,433 +1,281 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
- <title>A Z Creations</title>
-  <style>
-    body { font-family: Arial; margin: 0; background: #eebaef; }
-    header { background: #f56be1; color: rgb(128, 0, 96); padding: 20px; text-align: center; }
-    
-    .az{
-        font-size: 50px;
-        text-align: left;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Z Creations</title>
 
-    header h1{
-      color: #3c0147;
+<style>
+body { font-family: Arial; margin: 0; background: #eebaef; }
+header { background: #f56be1; color: rgb(128,0,96); padding: 20px; text-align: center; }
+.az { font-size: 50px; text-align: left; color:#3c0147; }
 
-    }
+.products {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px,1fr));
+  gap: 20px;
+  padding: 20px;
+}
 
-    .products {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
-      padding: 20px;
-    }
+.product {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+.product:hover { background:#ff00d4; }
 
-    .product {
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      text-align: center;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
+.product img {
+  width:100%;
+  height:280px;
+  object-fit:cover;
+  border-radius:8px;
+}
 
-    .product img {
-      width: 100%;
-      height: 280px;
-      object-fit: cover;
-      border-radius: 8px;
-    }
+.btn {
+  padding: 8px 15px;
+  background:#198754;
+  color:white;
+  border:none;
+  border-radius:5px;
+  cursor:pointer;
+  margin:5px;
+}
+.btn:hover { background:#157347; }
 
-    .btn {
-      padding: 8px 15px;
-      background: #198754;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      margin: 5px;
-    }
+.fixed-buttons1 {
+  position:fixed;
+  bottom:20px;
+  right:20px;
+}
 
-    .btn:hover { background: #157347; }
-    .product:hover{ background-color: rgb(255, 0, 212);}
+.popup {
+  position:fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  background:rgba(0,0,0,0.5);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  opacity:0;
+  visibility:hidden;
+  transform:scale(1.2);
+  transition:.3s;
+}
+.popup.active {
+  opacity:1;
+  visibility:visible;
+  transform:scale(1);
+}
 
-    .fixed-buttons1 {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
+.popup-content {
+  background:white;
+  padding:30px;
+  border-radius:10px;
+  width:90%;
+  max-width:500px;
+  position:relative;
+}
 
-    .popup {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.5);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      opacity: 0;
-      visibility: hidden;
-      transform: scale(1.2);
-      transition: all 0.3s ease;
-    }
+.close-btn {
+  position:absolute;
+  top:10px;
+  right:15px;
+  background:red;
+  color:white;
+  border:none;
+  padding:5px 10px;
+  border-radius:50%;
+  cursor:pointer;
+}
 
-    .popup.active {
-      opacity: 1;
-      visibility: visible;
-      transform: scale(1);
-    }
+input {
+  width:100%;
+  padding:10px;
+  margin-bottom:10px;
+  border-radius:5px;
+  border:1px solid #ccc;
+}
 
-    .popup-content {
-      background: white;
-      padding: 30px;
-      border-radius: 10px;
-      width: 90%;
-      max-width: 500px;
-      max-height: 90%;
-      overflow-y: auto;
-      position: relative;
-    }
+.cart-item {
+  display:flex;
+  justify-content:space-between;
+  border-bottom:1px solid #eee;
+  padding:5px 0;
+}
 
-    .popup-content h2 { margin-top: 0; }
-
-    .close-btn {
-      position: absolute;
-      top: 10px; right: 15px;
-      background: red;
-      color: white;
-      border: none;
-      padding: 5px 10px;
-      cursor: pointer;
-      border-radius: 50%;
-    }
-
-    input, select {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 10px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-    }
-
-    .cart-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 5px 0;
-      border-bottom: 1px solid #eee;
-    }
-
-    .cart-item span {
-      flex: 1;
-    }
-
-    .remove-btn {
-      background: #dc3545;
-      color: white;
-      border: none;
-      padding: 5px 10px;
-      border-radius: 50%;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    ul { padding-left: 0; list-style: none; }
-    .product input {
-      width: 60px;
-      padding: 5px;
-      margin: 10px auto;
-      display: block;
-      text-align: center;
-    }
-  </style>
+.remove-btn {
+  background:#dc3545;
+  color:white;
+  border:none;
+  border-radius:50%;
+  cursor:pointer;
+}
+</style>
 </head>
+
 <body>
 
 <header>
-    <h1 class="az">A Z Creations </h1>
-  <h1 style="background-color: #eebaef;">Resin Products</h1>
-  <h2 style="background-color: #eebaef;">Coaster</h2>
+<h1 class="az">A Z Creations</h1>
+<h2>Resin Products – Coasters</h2>
 </header>
 
 <section class="products">
-  <div class="product">
-    <img src="Initial Coaster.jpg" alt="Product">
-    <h3>Rose Coaster</h3>
-    <p>₹400</p>
-    QTY:<input type="number" id="qtyA" value="1" min="1" style="width: 25px;">
-    <button class="btn" onclick="addToCart('Rose Coaster', 400, parseInt(document.getElementById('qtyA').value))">Add to Cart</button>
-    <button class="btn" onclick="openSingleOrderForm('Rose Coaster', 400, parseInt(document.getElementById('qtyA').value))">Order</button>
-  </div>
-  <div class="product">
-  <img src="Love Coaster.jpg" alt="Product">
-  <h3 id="loveCoasterName">Love Coaster</h3>
-  <p>₹450</p>
-  QTY:<input type="number" id="qtyB" value="1" min="1" style="width: 25px;">
-  <input type="text" id="loveWordInput" placeholder="Enter small message" maxlength="50" style="width: 200px;">
-  <center><p>Also Send 1 pic to attach with it. After Order.</p></center>
-  <button class="btn" onclick="addLoveCoasterToCart()">Add to Cart</button>
-  <button class="btn" onclick="openLoveCoasterOrder()">Order</button>
-</div>
 
+<!-- Rose -->
 <div class="product">
-  <img src="Happy Birthday Coaster.jpg" alt="Product">
-  <h3 id="birthdayCoasterName">Happy Birthday Coaster</h3>
-  <p>₹450</p>
-  QTY:<input type="number" id="qtyC" value="1" min="1" style="width: 25px;">
-  <input type="text" id="birthdayWordInput" placeholder="Enter name" maxlength="20" style="width: 80px;">
-  <center><p>Also Send 1 pic to attach with it. After Order.</p></center>
-  <button class="btn" onclick="addBirthdayCoasterToCart()">Add to Cart</button>
-  <button class="btn" onclick="openBirthdayCoasterOrder()">Order</button>
+<img src="Initial Coaster.jpg">
+<h3>Rose Coaster (Without Stand)</h3>
+<p>₹500</p>
+QTY <input type="number" id="qtyA" value="1" min="1" style="width:40px">
+<button class="btn" onclick="addToCart('Rose Coaster',500,qtyA.value)">Add to Cart</button>
+<button class="btn" onclick="openSingle('Rose Coaster',500,qtyA.value)">Order</button>
 </div>
-  <div class="product">
-    <img src="Baby photo Coaster.jpg" alt="Product">
-    <h3>Baby photo Coaster</h3>
-    <p>₹400</p>
-    QTY:<input type="number" id="qtyD" value="1" min="1" style="width: 25px;">
-    <button class="btn" onclick="addToCart('Baby photo Coaster', 400, parseInt(document.getElementById('qtyD').value))">Add to Cart</button>
-    <button class="btn" onclick="openSingleOrderForm('Baby photo Coaster', 400, parseInt(document.getElementById('qtyD').value))">Order</button>
-  </div>
-  <div class="product">
-    <img src="Name Hexagon Coaster.jpg" alt="Product">
-    <h3 id="productNameE">Name Hexagon Coaster</h3>
-    <p>₹400</p>
-    QTY:<input type="number" id="qtyE" value="1" min="1" style="width: 25px;">
-    <input type="text" id="wordInputE" placeholder="Enter name" maxlength="20" style="width: 80px;">
-    <button class="btn" onclick="addWordNamedProductToCartE()">Add to Cart</button>
-    <button class="btn" onclick="openWordProductOrderE()">Order</button>
-  </div>
 
- <div class="product">
-    <img src="Photo Coaster.jpg" alt="Product">
-    <h3>Photo Coaster</h3>
-    <p>₹450</p>
-    QTY:<input type="number" id="qtyF" value="1" min="1" style="width: 25px;">
-    <center><p>Also Send 1 pic to attach with it. After Order.</p></center>
-    <button class="btn" onclick="addToCart('Photo Coaster', 450, parseInt(document.getElementById('qtyF').value))">Add to Cart</button>
-    <button class="btn" onclick="openSingleOrderForm('Photo Coaster', 450, parseInt(document.getElementById('qtyF').value))">Order</button>
-  </div>
+<!-- Love -->
+<div class="product">
+<img src="Love Coaster.jpg">
+<h3 id="loveName">Love Coaster (Without Stand)</h3>
+<p>₹550</p>
+QTY <input type="number" id="qtyB" value="1" min="1" style="width:40px">
+<input type="text" id="loveMsg" placeholder="Enter message" maxlength="50">
+<button class="btn" onclick="addLove()">Add to Cart</button>
+<button class="btn" onclick="orderLove()">Order</button>
+</div>
+
+<!-- Birthday -->
+<div class="product">
+<img src="Happy Birthday Coaster.jpg">
+<h3 id="bdayName">Happy Birthday Coaster (Without Stand)</h3>
+<p>₹550</p>
+QTY <input type="number" id="qtyC" value="1" min="1" style="width:40px">
+<input type="text" id="bdayMsg" placeholder="Enter name" maxlength="20">
+<button class="btn" onclick="addBirthday()">Add to Cart</button>
+<button class="btn" onclick="orderBirthday()">Order</button>
+</div>
+
+<!-- Baby -->
+<div class="product">
+<img src="Baby photo Coaster.jpg">
+<h3>Baby Photo Coaster (Without Stand)</h3>
+<p>₹500</p>
+QTY <input type="number" id="qtyD" value="1" min="1" style="width:40px">
+<button class="btn" onclick="addToCart('Baby Photo Coaster',500,qtyD.value)">Add to Cart</button>
+<button class="btn" onclick="openSingle('Baby Photo Coaster',500,qtyD.value)">Order</button>
+</div>
+
+<!-- Name Hexagon -->
+<div class="product">
+<img src="Name Hexagon Coaster.jpg">
+<h3 id="hexName">Name Hexagon Coaster (Without Stand)</h3>
+<p>₹500</p>
+QTY <input type="number" id="qtyE" value="1" min="1" style="width:40px">
+<input type="text" id="hexMsg" placeholder="Enter name" maxlength="20">
+<button class="btn" onclick="addHex()">Add to Cart</button>
+<button class="btn" onclick="orderHex()">Order</button>
+</div>
+
+<!-- Photo -->
+<div class="product">
+<img src="Photo Coaster.jpg">
+<h3>Photo Coaster (Without Stand)</h3>
+<p>₹550</p>
+QTY <input type="number" id="qtyF" value="1" min="1" style="width:40px">
+<button class="btn" onclick="addToCart('Photo Coaster',550,qtyF.value)">Add to Cart</button>
+<button class="btn" onclick="openSingle('Photo Coaster',550,qtyF.value)">Order</button>
+</div>
 
 </section>
 
-<!-- Fixed Buttons -->
 <div class="fixed-buttons1">
-  <button class="btn" onclick="togglePopup('cartPopup')">Cart</button>
+<button class="btn" onclick="toggle('cartPopup')">Cart</button>
 </div>
 
-<!-- Cart Popup (with inline order form) -->
+<!-- Cart -->
 <div id="cartPopup" class="popup">
-  <div class="popup-content">
-    <button class="close-btn" onclick="togglePopup('cartPopup')">×</button>
-    <h2>Shopping Cart</h2>
-    <ul id="cartItems"></ul>
-    <p><strong>Total: ₹<span id="cartTotal">0</span></strong></p>
-    <hr>
-    <input id="cName" type="text" placeholder="Your Name">
-    <input id="cAddress" type="text" placeholder="Your Address">
-    <input id="cPhone" type="text" placeholder="Your Phone Number">
-    <button class="btn" onclick="sendCartOrder()">Order via WhatsApp</button>
-  </div>
+<div class="popup-content">
+<button class="close-btn" onclick="toggle('cartPopup')">×</button>
+<h2>Cart</h2>
+<ul id="cartItems"></ul>
+<p><strong>Total ₹<span id="total">0</span></strong></p>
+<input id="cName" placeholder="Name">
+<input id="cAddress" placeholder="Address">
+<input id="cPhone" placeholder="Phone">
+<button class="btn" onclick="sendCart()">Order via WhatsApp</button>
+</div>
 </div>
 
-<!-- Single Product Order Popup -->
-<div id="singleOrderPopup" class="popup">
-  <div class="popup-content">
-    <button class="close-btn" onclick="togglePopup('singleOrderPopup')">×</button>
-    <h2>Order Product</h2>
-    <input id="sName" type="text" placeholder="Your Name">
-    <input id="sAddress" type="text" placeholder="Your Address">
-    <input id="sPhone" type="text" placeholder="Your Phone Number">
-    <button class="btn" onclick="sendSingleOrder()">Order via WhatsApp</button>
-  </div>
+<!-- Single Order -->
+<div id="singlePopup" class="popup">
+<div class="popup-content">
+<button class="close-btn" onclick="toggle('singlePopup')">×</button>
+<input id="sName" placeholder="Name">
+<input id="sAddress" placeholder="Address">
+<input id="sPhone" placeholder="Phone">
+<button class="btn" onclick="sendSingle()">Order via WhatsApp</button>
 </div>
-
-  <div id="singleOrderPopup" class="popup">
-    <div class="popup-content">
-      <button class="close-btn" onclick="togglePopup('singleOrderPopup')">×</button>
-      <h2>Order Product</h2>
-      <input id="sName" type="text" placeholder="Your Name">
-      <input id="sAddress" type="text" placeholder="Your Address">
-      <input id="sPhone" type="text" placeholder="Your Phone Number">
-      <button class="btn" onclick="sendSingleOrder()">Order via WhatsApp</button>
-    </div>
-  </div>
+</div>
 
 <script>
-  function addLoveCoasterToCart() {
-  const baseName = "Love Coaster";
-  const qty = parseInt(document.getElementById('qtyB').value) || 1;
-  const word = document.getElementById('loveWordInput').value.trim();
+const cart=[];
+let single={};
 
-  if (!/^[A-Za-z0-9\s]{1,50}$/.test(word)) {
-    alert("Please enter a valid message (letters/numbers/spaces only, max 50 characters).");
-    return;
-  }
-
-  const customName = `${baseName} (${word})`;
-  document.getElementById('loveCoasterName').textContent = customName;
-
-  cart.push({ product: customName, price: 450, quantity: qty });
-  updateCart();
-  alert(`${customName} x${qty} added to cart!`);
+function addToCart(p,pr,q){
+cart.push({p,pr,q});
+render();
 }
 
-function openLoveCoasterOrder() {
-  const qty = parseInt(document.getElementById('qtyB').value) || 1;
-  const word = document.getElementById('loveWordInput').value.trim();
-  const baseName = "Love Coaster";
-
-  if (!/^[A-Za-z0-9\s]{1,50}$/.test(word)) {
-    alert("Please enter a valid message (letters/numbers/spaces only, max 50 characters).");
-    return;
-  }
-
-  const customName = `${baseName} (${word})`;
-  currentSingleProduct = { product: customName, price: 450, quantity: qty };
-  togglePopup('singleOrderPopup');
+function render(){
+let t=0;
+cartItems.innerHTML="";
+cart.forEach((i,n)=>{
+t+=i.pr*i.q;
+cartItems.innerHTML+=`<li class="cart-item">${i.p} x${i.q} ₹${i.pr*i.q}
+<button class="remove-btn" onclick="cart.splice(${n},1);render()">×</button></li>`;
+});
+total.textContent=t;
 }
 
-function addBirthdayCoasterToCart() {
-  const baseName = "Happy Birthday Coaster";
-  const qty = parseInt(document.getElementById('qtyC').value) || 1;
-  const word = document.getElementById('birthdayWordInput').value.trim();
+function toggle(id){document.getElementById(id).classList.toggle("active");}
 
-  if (!/^[A-Za-z0-9\s]{1,20}$/.test(word)) {
-    alert("Please enter a valid name (letters/numbers/spaces only, max 20 characters).");
-    return;
-  }
+function openSingle(p,pr,q){single={p,pr,q};toggle('singlePopup');}
 
-  const customName = `${baseName} (${word})`;
-  document.getElementById('birthdayCoasterName').textContent = customName;
-
-  cart.push({ product: customName, price: 450, quantity: qty });
-  updateCart();
-  alert(`${customName} x${qty} added to cart!`);
+function sendCart(){
+let msg=`*A Z Creations*%0A`;
+cart.forEach(i=>msg+=`${i.p} x${i.q} ₹${i.pr*i.q}%0A`);
+window.open(`https://wa.me/917632896742?text=${msg}`);
 }
 
-function openBirthdayCoasterOrder() {
-  const qty = parseInt(document.getElementById('qtyC').value) || 1;
-  const word = document.getElementById('birthdayWordInput').value.trim();
-  const baseName = "Happy Birthday Coaster";
-
-  if (!/^[A-Za-z0-9\s]{1,20}$/.test(word)) {
-    alert("Please enter a valid name (letters/numbers/spaces only, max 20 characters).");
-    return;
-  }
-
-  const customName = `${baseName} (${word})`;
-  currentSingleProduct = { product: customName, price: 450, quantity: qty };
-  togglePopup('singleOrderPopup');
-}
- function addWordNamedProductToCartE() {
-    const baseName = "Name Hexagon Coaster";
-    const qty = parseInt(document.getElementById('qtyE').value) || 1;
-    const word = document.getElementById('wordInputE').value.trim();
-
-    if (!/^[A-Za-z\s]{1,20}$/.test(word)) {
-  alert("Please enter a valid name (letters/spaces only, max 20 characters).");
-  return;
+function sendSingle(){
+window.open(`https://wa.me/917632896742?text=*${single.p}* x${single.q} ₹${single.pr*single.q}`);
 }
 
-
-    const customName = `${baseName} (${word})`;
-    document.getElementById('productNameE').textContent = customName;
-    cart.push({ product: customName, price: 400, quantity: qty });
-    updateCart();
-    alert(`${customName} x${qty} added to cart!`);
-  }
-
-  function openWordProductOrderE() {
-    const qty = parseInt(document.getElementById('qtyE').value) || 1;
-    const word = document.getElementById('wordInputE').value.trim();
-    const baseName = "Name Hexagon Coaster";
-
-    if (!/^[A-Za-z\s]{1,20}$/.test(word)) {
-  alert("Please enter a valid name (letters/spaces only, max 20 characters).");
-  return;
+function addLove(){
+let m=loveMsg.value.trim();
+let n=`Love Coaster (${m})`;
+loveName.textContent=n;
+addToCart(n,550,qtyB.value);
 }
 
+function orderLove(){openSingle(`Love Coaster (${loveMsg.value})`,550,qtyB.value);}
 
-    const customName = `${baseName} (${word})`;
-    currentSingleProduct = { product: customName, price: 400, quantity: qty };
-    togglePopup('singleOrderPopup');
-  }
-  const cart = [];
-  let currentSingleProduct = {};
+function addBirthday(){
+let n=`Happy Birthday (${bdayMsg.value})`;
+bdayName.textContent=n;
+addToCart(n,550,qtyC.value);
+}
 
-  function addToCart(product, price, quantity) {
-    cart.push({ product, price, quantity });
-    updateCart();
-    alert(`${product} x${quantity} added to cart!`);
-  }
-  
-  function removeFromCart(index) {
-    cart.splice(index, 1);
-    updateCart();
-  }
+function orderBirthday(){openSingle(`Happy Birthday (${bdayMsg.value})`,550,qtyC.value);}
 
-  function updateCart() {
-    const cartItems = document.getElementById('cartItems');
-    const cartTotal = document.getElementById('cartTotal');
-    cartItems.innerHTML = '';
-    let total = 0;
-    cart.forEach((item, index) => {
-      const li = document.createElement('li');
-      li.className = 'cart-item';
-      li.innerHTML = `
-        <span>${item.product} x${item.quantity} - ₹${item.price * item.quantity}</span>
-        <button class="remove-btn" onclick="removeFromCart(${index})">×</button>
-      `;
-      cartItems.appendChild(li);
-      total += item.price * item.quantity;
-    });
-    cartTotal.textContent = total;
-  }
+function addHex(){
+let n=`Name Hexagon (${hexMsg.value})`;
+hexName.textContent=n;
+addToCart(n,500,qtyE.value);
+}
 
-  function togglePopup(id) {
-    document.getElementById(id).classList.toggle('active');
-  }
-
-  function openSingleOrderForm(product, price, quantity) {
-    currentSingleProduct = { product, price, quantity };
-    togglePopup('singleOrderPopup');
-  }
-
-  function sendCartOrder() {
-    const name = document.getElementById("cName").value;
-    const address = document.getElementById("cAddress").value;
-    const phone = document.getElementById("cPhone").value;
-    if (!name || !address || !phone) return alert("Fill all details.");
-    if (cart.length === 0) return alert("Cart is empty!");
-
-    let msg = `*A Z Creations*%0A*Cart Order*%0AName: ${name}%0AAddress: ${address}%0APhone: ${phone}%0A%0A*Items:*%0A`;
-    let total = 0;
-    cart.forEach(item => {
-      msg += `- ${item.product} x${item.quantity} ₹${item.price * item.quantity}%0A`;
-      total += item.price * item.quantity;
-    });
-    msg += `%0ATotal: ₹${total}`;
-    window.open(`https://wa.me/917632896742?text=${msg}`, '_blank');
-    togglePopup('cartPopup');
-    cart.length = 0;
-  }
-
-  function sendSingleOrder() {
-    const name = document.getElementById("sName").value;
-    const address = document.getElementById("sAddress").value;
-    const phone = document.getElementById("sPhone").value;
-    if (!name || !address || !phone) return alert("Fill all details.");
-
-    const p = currentSingleProduct;
-    let msg = `*A Z Creations*%0A*Single Product Order*%0AName: ${name}%0AAddress: ${address}%0APhone: ${phone}%0A%0AProduct: ${p.product} x${p.quantity}%0APrice: ₹${p.price * p.quantity}`;
-    window.open(`https://wa.me/917632896742?text=${msg}`, '_blank');
-    togglePopup('singleOrderPopup');
-  }
-
+function orderHex(){openSingle(`Name Hexagon (${hexMsg.value})`,500,qtyE.value);}
 </script>
 
 </body>
